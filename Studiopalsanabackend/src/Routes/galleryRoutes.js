@@ -5,7 +5,7 @@ const { uploadImage, getImages, deleteImage } = require("../controllers/galleryC
 
 const router = express.Router();
 
-router.post("/upload", auth, upload.single("image"), uploadImage);
+router.post("/upload", auth, upload.single("image"), uploadImage); // auth first
 router.get("/get", getImages);
 router.delete("/delete/:id", auth, deleteImage);
 
