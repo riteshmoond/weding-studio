@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
-const packageSchema = new mongoose.Schema({
-  title: String,
-  price: Number,
-  description: String,
-});
-
-module.exports = mongoose.model("Package", packageSchema);
+module.exports = mongoose.model(
+  "Package",
+  new mongoose.Schema({
+    title: String,
+    price: String,
+    features: [String],
+  })
+);

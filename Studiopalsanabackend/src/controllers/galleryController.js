@@ -2,13 +2,17 @@ const Gallery = require("../Models/Gallery");
 
 exports.uploadImage = async (req, res) => {
   try {
-    if (!req.user) return res.status(401).json({ message: "Not Authenticated" });
+    if (!req.admin) return res.status(401).json({ message: "Not Authenticated" });
 
-    if (!req.file || !req.file.path) {
+    if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const data = await Gallery.create({ imageUrl: req.file.path });
+    // support different storage adapters (multer-storage-cloudinary etc.)
+    const imageUrl = req.file.path || req.file.secure_url || req.file.url || req.file.filename;
+    if (!imageUrl) return res.status(500).json({ message: "Uploaded file missing URL" });
+
+    const data = await Gallery.create({ imageUrl });
     return res.status(201).json(data);
   } catch (err) {
     console.error("uploadImage error:", err);
@@ -28,7 +32,7 @@ exports.getImages = async (req, res) => {
 
 exports.deleteImage = async (req, res) => {
   try {
-    if (!req.user) return res.status(401).json({ message: "Not Authenticated" });
+    if (!req.admin) return res.status(401).json({ message: "Not Authenticated" });
 
     const id = req.params.id;
     const img = await Gallery.findById(id);

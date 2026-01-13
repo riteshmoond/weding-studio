@@ -1,9 +1,20 @@
 const express = require("express");
-const { createMessage, getMessages } = require("../controllers/messageController");
+const auth = require("../middleware/auth");
+const {
+  sendMessage,
+  getMessages,
+  deleteMessage,
+} = require("../controllers/messageController");
 
 const router = express.Router();
 
-router.post("/create", createMessage);
-router.get("/get", getMessages);
+// USER → send message
+router.post("/", sendMessage);
+
+// ADMIN → view messages
+router.get("/", auth, getMessages);
+
+// ADMIN → delete message
+router.delete("/:id", auth, deleteMessage);
 
 module.exports = router;

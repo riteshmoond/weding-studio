@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
   name: String,
-  email: String,
   phone: String,
+  email: String,
   eventDate: String,
   message: String,
   createdAt: { type: Date, default: Date.now },

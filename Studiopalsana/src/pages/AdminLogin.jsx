@@ -12,7 +12,7 @@ export default function AdminLogin() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (data.email === "admin@studio.com" && data.password === "123456") {
+    if (data.email === "admin@studio.com" && data.password === "admin@9257") {
       localStorage.setItem("adminAuth", "true");
       navigate("/admin/dashboard");
     } else {

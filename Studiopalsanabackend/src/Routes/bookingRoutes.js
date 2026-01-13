@@ -1,9 +1,17 @@
 const express = require("express");
-const { createBooking, getBookings } = require("../controllers/bookingController");
+const auth = require("../middleware/auth");
+const {
+  createBooking,
+  getBookings,
+  updateBooking,
+  deleteBooking,
+} = require("../controllers/bookingController");
 
 const router = express.Router();
 
-router.post("/create", createBooking);
-router.get("/get", getBookings);
+router.post("/", createBooking); // user
+router.get("/", auth, getBookings); // admin
+router.patch("/:id", auth, updateBooking); // admin
+router.delete("/:id", auth, deleteBooking); // admin
 
 module.exports = router;
