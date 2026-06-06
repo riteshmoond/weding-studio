@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
-    bookingId: { type: String, unique: true, index: true },
+    bookingId: {
+      type: String,
+      unique: true,
+      index: true,
+      default: () => `RWS-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 90 + 10)}`,
+    },
     name: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
     email: { type: String, required: true, lowercase: true, trim: true },
@@ -28,13 +33,6 @@ const bookingSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-bookingSchema.pre("validate", function setBookingId(next) {
-  if (!this.bookingId) {
-    this.bookingId = `RWS-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 90 + 10)}`;
-  }
-  next();
-});
 
 module.exports = mongoose.model("Booking", bookingSchema);
 

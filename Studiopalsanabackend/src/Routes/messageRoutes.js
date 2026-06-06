@@ -1,5 +1,6 @@
 const express = require("express");
 const auth = require("../Middleware/Auth");
+const adminOnly = require("../Middleware/adminOnly");
 const {
   sendMessage,
   getMessages,
@@ -12,9 +13,9 @@ const router = express.Router();
 router.post("/", sendMessage);
 
 // ADMIN → view messages
-router.get("/", auth, getMessages);
+router.get("/", auth, adminOnly, getMessages);
 
 // ADMIN → delete message
-router.delete("/:id", auth, deleteMessage);
+router.delete("/:id", auth, adminOnly, deleteMessage);
 
 module.exports = router;

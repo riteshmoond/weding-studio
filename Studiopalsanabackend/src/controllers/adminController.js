@@ -11,7 +11,7 @@ exports.login = async (req, res) => {
   const match = await bcrypt.compare(password, admin.password);
   if (!match) return res.status(401).json({ message: "Wrong password" });
 
-  const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id: admin._id, role: "admin", email: admin.email }, process.env.JWT_SECRET || "development-secret-change-me", {
     expiresIn: "7d",
   });
 
@@ -21,7 +21,16 @@ exports.login = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.json({ message: "Login successful" });
+  res.json({
+    message: "Login successful",
+    token,
+    user: {
+      id: admin._id,
+      email: admin.email,
+      role: "admin",
+      name: admin.name || "Admin",
+    },
+  });
 };
 
 exports.logout = (req, res) => {

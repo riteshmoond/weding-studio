@@ -1,42 +1,47 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../lib/api";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminTopbar from "../components/AdminTopbar";
 import { Menu } from "lucide-react";
 
 export default function AdminMessages() {
-  const initialMessages = [
-    {
-      id: 1,
-      name: "Rohan Sharma",
-      email: "rohan@gmail.com",
-      phone: "9876543210",
-      message: "We want to book a wedding package. Please contact.",
-      date: "2025-01-10",
-    },
-    {
-      id: 2,
-      name: "Priya Verma",
-      email: "priya@gmail.com",
-      phone: "9876501111",
-      message: "Need pricing details for pre-wedding shoot.",
-      date: "2025-01-15",
-    },
-  ];
-
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
   const [modalData, setModalData] = useState(null);
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("Loading messages...");
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const load = async () => {
+    try {
+      setStatus("Loading messages...");
+      const data = await api("/messages");
+      setMessages(data);
+      setStatus("");
+    } catch (error) {
+      setMessages([]);
+      setStatus(error.message);
+    }
+  };
+
+  useEffect(() => {
+    void load();
+  }, []);
 
   const filtered = messages.filter((m) => {
     const s = search.toLowerCase();
     return (
-      m.name.toLowerCase().includes(s) ||
-      m.email.toLowerCase().includes(s) ||
-      m.phone.includes(search)
+      String(m.name || "").toLowerCase().includes(s) ||
+      String(m.email || "").toLowerCase().includes(s) ||
+      String(m.phone || "").includes(search)
     );
   });
+
+  async function removeMessage(id) {
+    await api(`/messages/${id}`, { method: "DELETE" });
+    setMessages((items) => items.filter((item) => item._id !== id));
+    setModalData((current) => (current?._id === id ? null : current));
+  }
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
@@ -90,6 +95,8 @@ export default function AdminMessages() {
           />
 
           {/* TABLE */}
+          {status && <p className="mb-4 rounded-xl bg-white p-4 shadow-sm">{status}</p>}
+
           <div className="bg-white rounded-xl shadow-lg overflow-x-auto">
             <table className="min-w-[750px] w-full">
               <thead>
@@ -103,17 +110,18 @@ export default function AdminMessages() {
               </thead>
 
               <tbody>
-                {filtered.map((m) => (
-                  <tr key={m.id} className="border-b hover:bg-gray-50">
+                {filtered.length ? filtered.map((m) => (
+                  <tr key={m._id || m.id} className="border-b hover:bg-gray-50">
                     <td className="p-4">{m.name}</td>
                     <td className="p-4">{m.phone}</td>
                     <td className="p-4">{m.email}</td>
-                    <td className="p-4">{m.date}</td>
+                    <td className="p-4">{m.createdAt ? new Date(m.createdAt).toLocaleDateString("en-IN") : m.date}</td>
 
                     <td className="p-4">
                       <div className="flex flex-col sm:flex-row gap-2">
 
                         <button
+                          type="button"
                           className="bg-blue-600 text-white px-3 py-1 rounded-md"
                           onClick={() => setModalData(m)}
                         >
@@ -121,10 +129,9 @@ export default function AdminMessages() {
                         </button>
 
                         <button
+                          type="button"
                           className="bg-red-600 text-white px-3 py-1 rounded-md"
-                          onClick={() =>
-                            setMessages(messages.filter((x) => x.id !== m.id))
-                          }
+                          onClick={() => removeMessage(m._id || m.id)}
                         >
                           Delete
                         </button>
@@ -133,7 +140,13 @@ export default function AdminMessages() {
                     </td>
 
                   </tr>
-                ))}
+                )) : !status ? (
+                  <tr>
+                    <td className="p-6 text-center text-gray-500" colSpan="5">
+                      No messages yet.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
@@ -149,7 +162,7 @@ export default function AdminMessages() {
               <p><b>Name:</b> {modalData.name}</p>
               <p><b>Email:</b> {modalData.email}</p>
               <p><b>Phone:</b> {modalData.phone}</p>
-              <p><b>Date:</b> {modalData.date}</p>
+              <p><b>Date:</b> {modalData.createdAt ? new Date(modalData.createdAt).toLocaleString("en-IN") : modalData.date}</p>
 
               <p className="mt-4"><b>Message:</b></p>
               <p className="text-gray-700">{modalData.message}</p>
