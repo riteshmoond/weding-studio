@@ -29,6 +29,21 @@ export default function AdminSettings() {
     alert("Settings saved successfully!");
   };
 
+  const resetSettings = () => {
+    localStorage.removeItem("studioSettings");
+    setSettings({
+      studioName: "",
+      email: "",
+      phone: "",
+      address: "",
+      heroImage: "",
+      instagram: "",
+      facebook: "",
+      youtube: "",
+    });
+    alert("Settings reset to defaults.");
+  };
+
   return (
     <div className="flex bg-gray-100 min-h-screen">
 
@@ -185,6 +200,13 @@ export default function AdminSettings() {
                 className="bg-black text-white px-8 py-3 rounded-xl hover:bg-gray-800 w-full sm:w-auto"
               >
                 Save Settings ✔
+              </button>
+              <button
+                type="button"
+                onClick={resetSettings}
+                className="mt-3 sm:mt-0 sm:ml-3 bg-white border border-gray-300 text-gray-700 px-8 py-3 rounded-xl hover:bg-gray-50 w-full sm:w-auto"
+              >
+                Reset to Defaults
               </button>
             </div>
 

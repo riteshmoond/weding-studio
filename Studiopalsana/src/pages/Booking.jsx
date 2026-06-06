@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CalendarDays, Check, ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
-import { useLocation } from "react-router-dom";
-import { createBooking } from "../lib/api";
+import { Link, useLocation } from "react-router-dom";
+import { createBooking, getCurrentUser, getToken } from "../lib/api";
 
 const steps = ["Your Details", "Event", "Date & Venue", "Package", "Add-ons", "Confirm"];
 const eventTypes = ["Wedding", "Engagement", "Haldi", "Mehndi", "Reception", "Pre-Wedding", "Other"];
@@ -10,6 +10,8 @@ const addOns = ["Drone Coverage", "LED Screen", "Live Streaming", "Crane Camera"
 
 export default function Booking() {
   const location = useLocation();
+  const user = getCurrentUser();
+  const hasCustomerAccess = Boolean(getToken() && user?.role === "customer");
   const initialPackage = new URLSearchParams(location.search).get("package") || "";
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState({ type: "", message: "" });
@@ -48,12 +50,34 @@ export default function Booking() {
   if (status.type === "success") {
     return (
       <main className="page-top section-shell">
-        <div className="mx-auto max-w-2xl rounded-[2rem] bg-white p-10 text-center shadow-xl">
+        <div className="mx-auto max-w-2xl rounded-4xl bg-white p-10 text-center shadow-xl">
           <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700"><Check size={30} /></span>
           <h1 className="mt-6 font-serif text-4xl">Your date is on our calendar.</h1>
           <p className="mt-4 text-stone-600">{status.message} Our team will contact you shortly.</p>
           <button onClick={() => window.location.assign("/")} className="btn-primary mt-8">Back to Home</button>
         </div>
+      </main>
+    );
+  }
+
+  if (!hasCustomerAccess) {
+    return (
+      <main className="page-top">
+        <section className="bg-[#17110f] px-6 py-20 text-center text-white">
+          <p className="eyebrow">Reserve Your Date</p>
+          <h1 className="font-serif text-5xl sm:text-6xl">Start your wedding story.</h1>
+          <p className="mx-auto mt-4 max-w-xl text-stone-300">Booking is available only after customer login. You can still explore the website overview freely.</p>
+        </section>
+        <section className="section-shell">
+          <div className="mx-auto max-w-2xl rounded-4xl bg-white p-8 text-center shadow-xl">
+            <h2 className="font-serif text-3xl">Customer login required</h2>
+            <p className="mt-4 text-stone-600">Please sign in or create a customer account to submit a booking request.</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link to="/account" className="btn-primary justify-center">Login / Register</Link>
+              <Link to="/gallery" className="btn-secondary justify-center">Explore Gallery</Link>
+            </div>
+          </div>
+        </section>
       </main>
     );
   }
@@ -76,7 +100,7 @@ export default function Booking() {
             ))}
           </div>
 
-          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-stone-200/60 sm:p-10">
+          <div className="rounded-4xl bg-white p-6 shadow-xl shadow-stone-200/60 sm:p-10">
             <h2 className="font-serif text-3xl">{steps[step]}</h2>
             <p className="mt-2 text-stone-500">Step {step + 1} of {steps.length}</p>
 

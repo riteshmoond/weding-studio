@@ -1,13 +1,68 @@
-export const studio = {
+const defaults = {
   name: "Royal Wedding Studio",
   tagline: "Turning Your Moments Into Memories",
   phone: "+91 98765 43210",
-  phoneLink: "tel:+919876543210",
   email: "hello@royalweddingstudio.in",
   address: "Vaishali Nagar, Jaipur, Rajasthan",
-  whatsapp:
-    "https://wa.me/919876543210?text=Hello%20I%20want%20to%20book%20a%20wedding%20package",
-  directions: "https://maps.google.com/?q=Vaishali+Nagar+Jaipur+Rajasthan",
+  heroImage: "",
+  instagram: "",
+  facebook: "",
+  youtube: "",
+};
+
+function readSettings() {
+  if (typeof window === "undefined") return {};
+  try {
+    return JSON.parse(localStorage.getItem("studioSettings")) || {};
+  } catch {
+    return {};
+  }
+}
+
+function digitsOnly(value) {
+  return String(value || "").replace(/\D/g, "");
+}
+
+export const studio = {
+  get name() {
+    return readSettings().studioName || defaults.name;
+  },
+  get tagline() {
+    return defaults.tagline;
+  },
+  get phone() {
+    return readSettings().phone || defaults.phone;
+  },
+  get phoneLink() {
+    const phone = digitsOnly(this.phone) || digitsOnly(defaults.phone);
+    return `tel:+${phone}`;
+  },
+  get email() {
+    return readSettings().email || defaults.email;
+  },
+  get address() {
+    return readSettings().address || defaults.address;
+  },
+  get heroImage() {
+    return readSettings().heroImage || defaults.heroImage;
+  },
+  get instagram() {
+    return readSettings().instagram || defaults.instagram;
+  },
+  get facebook() {
+    return readSettings().facebook || defaults.facebook;
+  },
+  get youtube() {
+    return readSettings().youtube || defaults.youtube;
+  },
+  get whatsapp() {
+    const phone = digitsOnly(this.phone) || digitsOnly(defaults.phone);
+    return `https://wa.me/${phone}?text=Hello%20I%20want%20to%20book%20a%20wedding%20package`;
+  },
+  get directions() {
+    const address = readSettings().address || defaults.address;
+    return `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+  },
 };
 
 export const defaultPackages = [
