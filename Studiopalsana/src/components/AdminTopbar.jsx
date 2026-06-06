@@ -6,7 +6,8 @@ export default function AdminTopbar() {
   const [openNotify, setOpenNotify] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
+    localStorage.removeItem("royalStudioToken");
+    localStorage.removeItem("royalStudioUser");
     window.location.href = "/admin/login";
   };
 

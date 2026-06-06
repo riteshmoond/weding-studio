@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminTopbar from "../components/AdminTopbar";
 import { Menu } from "lucide-react";
@@ -7,22 +7,19 @@ export default function AdminSettings() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // SETTINGS STATE
-  const [settings, setSettings] = useState({
-    studioName: "",
-    email: "",
-    phone: "",
-    address: "",
-    heroImage: "",
-    instagram: "",
-    facebook: "",
-    youtube: "",
-  });
-
-  // LOAD FROM LOCAL STORAGE
-  useEffect(() => {
+  const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem("studioSettings");
-    if (saved) setSettings(JSON.parse(saved));
-  }, []);
+    return saved ? JSON.parse(saved) : {
+      studioName: "",
+      email: "",
+      phone: "",
+      address: "",
+      heroImage: "",
+      instagram: "",
+      facebook: "",
+      youtube: "",
+    };
+  });
 
   const handleChange = (e) =>
     setSettings({ ...settings, [e.target.name]: e.target.value });

@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #241a17; background: #fbf8f5; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; }
+button, a, input, select, textarea { transition: all 180ms ease; }
+button, a { cursor: pointer; }
+.font-serif { font-family: Georgia, "Times New Roman", serif; }
+.section-shell { @apply mx-auto max-w-7xl px-6 py-24; }
+.section-title { @apply mt-3 font-serif text-4xl font-semibold leading-tight text-stone-900 sm:text-5xl; }
+.section-copy { @apply mt-6 text-lg leading-8 text-stone-600; }
+.eyebrow { @apply text-xs font-bold uppercase tracking-[0.32em] text-[#b3264b]; }
+.page-top { @apply pt-20; }
+.page-hero { @apply bg-[#17110f] px-6 py-24 text-center text-white; }
+.page-hero h1 { @apply mx-auto mt-4 max-w-4xl font-serif text-5xl font-semibold sm:text-6xl; }
+.page-hero > p:last-child { @apply mx-auto mt-5 max-w-2xl text-lg leading-8 text-stone-300; }
+.btn-primary { @apply inline-flex items-center gap-2 rounded-full bg-[#b3264b] px-6 py-3.5 font-bold text-white hover:bg-[#941d3d]; }
+.btn-secondary { @apply inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3.5 font-bold text-stone-800 hover:border-stone-500; }
+.btn-outline { @apply inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3.5 font-bold text-white hover:bg-white/10; }
+.btn-ghost { @apply inline-flex items-center gap-2 rounded-full px-5 py-3.5 font-bold text-white hover:bg-white/10; }
+.btn-light { @apply inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 font-bold text-[#b3264b] hover:bg-stone-100; }
+.form-grid { @apply grid gap-5 sm:grid-cols-2; }
+.field-label { @apply block text-sm font-bold text-stone-700; }
+.field-input { @apply mt-2 block w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3.5 font-normal outline-none focus:border-[#b3264b] focus:ring-2 focus:ring-rose-100; }
+.dark-input { @apply block w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3.5 text-white outline-none placeholder:text-stone-500 focus:border-[#e8c27a]; }
+.dark-input option { color: #241a17; }
+.social-link { @apply flex h-10 w-10 items-center justify-center rounded-full border border-white/15 hover:border-[#e8c27a] hover:text-[#e8c27a]; }
+.admin-action { @apply whitespace-nowrap rounded-lg bg-stone-100 px-3 py-2 text-xs font-bold hover:bg-stone-200; }

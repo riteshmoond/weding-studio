@@ -12,7 +12,14 @@ exports.uploadImage = async (req, res) => {
     const imageUrl = req.file.path || req.file.secure_url || req.file.url || req.file.filename;
     if (!imageUrl) return res.status(500).json({ message: "Uploaded file missing URL" });
 
-    const data = await Gallery.create({ imageUrl });
+    const data = await Gallery.create({
+      imageUrl,
+      publicId: req.file.filename || "",
+      title: req.body.title || "",
+      category: req.body.category || "Wedding",
+      album: req.body.album || "",
+      mediaType: req.file.mimetype?.startsWith("video/") ? "video" : "image",
+    });
     return res.status(201).json(data);
   } catch (err) {
     console.error("uploadImage error:", err);

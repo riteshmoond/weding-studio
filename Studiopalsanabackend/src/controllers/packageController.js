@@ -6,8 +6,17 @@ exports.createPackage = async (req, res) => {
 };
 
 exports.getPackages = async (req, res) => {
-  const data = await Package.find();
+  const data = await Package.find({ active: true }).sort({ price: 1 });
   res.json(data);
+};
+
+exports.updatePackage = async (req, res) => {
+  const data = await Package.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!data) return res.status(404).json({ message: "Package not found" });
+  return res.json(data);
 };
 
 exports.deletePackage = async (req, res) => {

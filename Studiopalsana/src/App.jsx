@@ -1,103 +1,58 @@
-import React from 'react'
-import Navbar from './components/Header.jsx'
-import { Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Services from "./pages/Services";
+import Gallery from "./pages/Gallery";
+import Packages from "./pages/Packages";
+import Contact from "./pages/Contact";
+import Booking from "./pages/Booking";
+import Reviews from "./pages/Reviews";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminBookings from "./pages/AdminBookings";
+import AdminMessages from "./pages/AdminMessages";
+import AdminSettings from "./pages/AdminSettings";
+import AdminGallery from "./pages/AdminGallery";
+import AdminPackages from "./pages/AdminPackages";
+import AdminReviews from "./pages/AdminReviews";
+import Account from "./pages/Account";
+import { getCurrentUser, getToken } from "./lib/api";
 
-import Home from './pages/Home.jsx'
-import About from './pages/About.jsx'
-import Services from './pages/Services.jsx'
-import Gallery from './pages/Gallery.jsx'
-import Packages from './pages/Packages.jsx'
-import Contact from './pages/Contact.jsx'
-import Footer from './components/Footer.jsx'
+function AdminRoute({ children }) {
+  const user = getCurrentUser();
+  return getToken() && user?.role === "admin" ? children : <Navigate to="/admin/login" replace />;
+}
 
-////////////// Admin Imports ///////////////
-import AdminLogin from './pages/AdminLogin.jsx'
-import AdminDashboard from './pages/AdminDashboard.jsx'
-import AdminBookings from './pages/AdminBookings.jsx'
-import AdminMessages from './pages/AdminMessages.jsx'
-import AdminSettings from './pages/AdminSettings.jsx'
-import AdminGallery from './pages/AdminGallery.jsx'
-import AdminPackages from './pages/AdminPackages.jsx'
-import { Navigate } from 'react-router-dom'
-
-
-const App = () => {
-
-  const AdminRoute = ({ children }) => {
-    if (localStorage.getItem("adminAuth") === "true") {
-      return children;
-    }
-    return <Navigate to="/admin/login" />;
-  };
+export default function App() {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
 
   return (
-    <>
-      <Navbar />
-
+    <div className="min-h-screen bg-[#fbf8f5] text-stone-900">
+      {!isAdmin && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/packages" element={<Packages />} />
+        <Route path="/booking" element={<Booking />} />
+        <Route path="/reviews" element={<Reviews />} />
         <Route path="/contact" element={<Contact />} />
-
-        /////////////// Admin Routes ///////////////
+        <Route path="/account" element={<Account />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-       <Route
-          path="/admin/bookings"
-          element={
-            <AdminRoute>
-              <AdminBookings />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/messages"
-          element={
-            <AdminRoute>
-              <AdminMessages />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/settings"
-          element={
-            <AdminRoute>
-              <AdminSettings />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/gallery"
-          element={
-            <AdminRoute>
-              <AdminGallery />
-            </AdminRoute>
-          }
-        />
-        <Route
-          path="/admin/packages"
-          element={
-            <AdminRoute>
-              <AdminPackages />
-            </AdminRoute>
-          }
-        />
+        <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/bookings" element={<AdminRoute><AdminBookings /></AdminRoute>} />
+        <Route path="/admin/messages" element={<AdminRoute><AdminMessages /></AdminRoute>} />
+        <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+        <Route path="/admin/gallery" element={<AdminRoute><AdminGallery /></AdminRoute>} />
+        <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />
+        <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-
-      <Footer />
-    </>
-  )
+      {!isAdmin && <Footer />}
+    </div>
+  );
 }
-
-export default App

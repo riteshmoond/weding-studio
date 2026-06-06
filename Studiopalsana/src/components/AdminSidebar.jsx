@@ -8,6 +8,7 @@ import {
   LogOut,
   Image,
   Package,
+  Star,
   X
 } from "lucide-react";
 
@@ -15,7 +16,8 @@ export default function AdminSidebar({ closeSidebar = () => {} }) {
   const { pathname } = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem("adminAuth");
+    localStorage.removeItem("royalStudioToken");
+    localStorage.removeItem("royalStudioUser");
     window.location.href = "/admin/login";
   };
 
@@ -98,6 +100,15 @@ export default function AdminSidebar({ closeSidebar = () => {} }) {
         >
           <Package size={20} />
           Packages Control
+        </Link>
+        <Link
+          to="/admin/reviews"
+          className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${isActive(
+            "/admin/reviews"
+          )}`}
+        >
+          <Star size={20} />
+          Reviews
         </Link>
       </nav>
 

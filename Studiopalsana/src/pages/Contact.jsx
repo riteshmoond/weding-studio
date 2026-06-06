@@ -1,130 +1,18 @@
-import React, { useState } from "react";
+import { createElement, useState } from "react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { api } from "../lib/api";
+import { studio } from "../lib/studioData";
 
 export default function Contact() {
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    date: "",
-    service: "",
-    message: "",
-  });
-
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = (e) => {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [message, setMessage] = useState("");
+  async function submit(e) {
     e.preventDefault();
-    alert("Your request has been sent!");
-  };
-
-  return (
-    <div className="w-full min-h-screen bg-black text-white">
-
-      {/* --------- MAIN SPLIT LAYOUT --------- */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-
-        {/* --------- LEFT SIDE FULL IMAGE --------- */}
-        <div
-          className="relative bg-cover bg-center bg-no-repeat h-96 lg:h-full"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1665960213508-48f07086d49c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjB3ZWRkaW5nJTIwY291cGxlfGVufDF8fHx8MTc2MzUyODQ3NHww&ixlib=rb-4.1.0&q=80&w=1080')",
-          }}
-        >
-          <div className="h-full w-full bg-black/50"></div>
-        </div>
-
-        {/* --------- RIGHT SIDE FORM --------- */}
-        <div className="flex items-center justify-center p-8 sm:p-14 bg-gradient-to-b from-black via-black/90 to-black">
-
-          <div className="w-full max-w-lg backdrop-blur-xl bg-white/10 p-10 rounded-3xl border border-white/20 shadow-2xl">
-
-            <h1 className="text-4xl font-bold text-center mb-6">
-              Book Your <span className="text-pink-400">Wedding Shoot</span>
-            </h1>
-
-            <p className="text-center text-gray-300 mb-8">
-              Fill your details & our team will contact you within 30 minutes.
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-
-              {/* Name */}
-              <div>
-                <label className="text-sm font-semibold text-gray-200">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-3 bg-black/30 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="text-sm font-semibold text-gray-200">Phone</label>
-                <input
-                  type="number"
-                  name="phone"
-                  required
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-3 bg-black/30 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              {/* Date */}
-              <div>
-                <label className="text-sm font-semibold text-gray-200">Wedding Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  required
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-3 bg-black/30 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              {/* Service */}
-              <div>
-                <label className="text-sm font-semibold text-gray-200">Choose Service</label>
-                <select
-                  name="service"
-                  required
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-3 bg-black/30 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-pink-500"
-                >
-                  <option value="">Select</option>
-                  <option>Wedding Photography</option>
-                  <option>Cinematic Videography</option>
-                  <option>Pre-Wedding Shoot</option>
-                  <option>Engagement Shoot</option>
-                </select>
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="text-sm font-semibold text-gray-200">Message</label>
-                <textarea
-                  name="message"
-                  rows="3"
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-3 bg-black/30 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-pink-500"
-                  placeholder="Tell us more..."
-                ></textarea>
-              </div>
-
-              {/* Button */}
-              <button
-                type="submit"
-                className="w-full bg-pink-600 hover:bg-pink-700  py-4 text-lg rounded-xl font-semibold transition shadow-lg"
-              >
-                Submit Inquiry →
-              </button>
-            </form>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    try {
+      await api("/messages", { method: "POST", body: JSON.stringify(form) });
+      setMessage("Thanks. Our team will contact you shortly.");
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (error) { setMessage(error.message); }
+  }
+  return <main className="page-top"><section className="page-hero"><p className="eyebrow">Let’s Talk</p><h1>Your celebration starts here.</h1><p>Share your plans with us, check availability or visit our Jaipur studio.</p></section><section className="section-shell grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><h2 className="font-serif text-4xl">Contact the studio</h2><div className="mt-8 space-y-4">{[[Phone,studio.phone,studio.phoneLink],[MessageCircle,"Chat on WhatsApp",studio.whatsapp],[Mail,studio.email,`mailto:${studio.email}`],[MapPin,studio.address,studio.directions]].map(([Icon,label,href]) => <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm hover:-translate-y-0.5"><span className="rounded-full bg-rose-50 p-3 text-[#b3264b]">{createElement(Icon)}</span><span className="font-semibold">{label}</span></a>)}</div><iframe title="Studio location" className="mt-5 h-64 w-full rounded-2xl border-0" src="https://maps.google.com/maps?q=Vaishali%20Nagar%20Jaipur&t=&z=13&ie=UTF8&iwloc=&output=embed" loading="lazy" /></div><form onSubmit={submit} className="rounded-[2rem] bg-white p-7 shadow-xl sm:p-10"><h2 className="font-serif text-3xl">Send an enquiry</h2><div className="form-grid mt-7"><label className="field-label">Full Name<input className="field-input" required value={form.name} onChange={(e) => setForm({...form,name:e.target.value})} /></label><label className="field-label">Phone<input className="field-input" required value={form.phone} onChange={(e) => setForm({...form,phone:e.target.value})} /></label><label className="field-label sm:col-span-2">Email<input type="email" className="field-input" required value={form.email} onChange={(e) => setForm({...form,email:e.target.value})} /></label><label className="field-label sm:col-span-2">Message<textarea className="field-input min-h-36" required value={form.message} onChange={(e) => setForm({...form,message:e.target.value})} /></label></div><button className="btn-primary mt-6">Send Enquiry</button>{message && <p className="mt-4 text-sm text-[#b3264b]">{message}</p>}</form></section></main>;
 }

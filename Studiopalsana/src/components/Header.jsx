@@ -1,112 +1,71 @@
-import React, { useState} from "react";
-import { Menu, X } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Menu, Phone, X } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import { studio } from "../lib/studioData";
 
-const Navbar = () => {
+const links = [
+  ["Home", "/"],
+  ["About", "/about"],
+  ["Gallery", "/gallery"],
+  ["Packages", "/packages"],
+  ["Reviews", "/reviews"],
+  ["Contact", "/contact"],
+  ["Account", "/account"],
+];
+
+export default function Header() {
   const [open, setOpen] = useState(false);
-  const [hide, setHide] = useState(false);
 
-  // Scroll track using ref (NO ERROR)
-  // const lastScroll = useRef(0);
-
-  // 🔥 Hide Navbar on Admin pages
-  const isAdminRoute = window.location.pathname.startsWith("/admin");
-  if (isAdminRoute) return null;
-
-  // 🔥 Hide navbar on scroll down, show on scroll up
-  
-  const links = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Services", path: "/services" },
-    { name: "Gallery", path: "/gallery" },
-    { name: "Packages", path: "/packages" },
-    { name: "Contact", path: "/contact" },
-  ];
-  
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const current = window.scrollY;
-
-  //     if (current > lastScroll.current && current > 80) {
-  //       setHide(true); // hide navbar
-  //     } else {
-  //       setHide(false); // show navbar
-  //     }
-
-  //     lastScroll.current = current;
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []); 
   return (
-    <header
-      className={`
-        fixed left-0 w-full z-50 transition-all duration-300
-        backdrop-blur-xl bg-white/70 shadow-md
-        ${hide ? "-top-24" : "top-0"}
-      `}
-    >
-      <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-4">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#17110f]/90 text-white backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5">
+        <Link to="/" className="leading-tight">
+          <span className="block font-serif text-xl font-bold tracking-wide text-[#e8c27a]">
+            Royal Wedding
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.35em] text-stone-300">Studio</span>
+        </Link>
 
-        {/* Logo */}
-        <h1 className="text-2xl font-bold tracking-wide text-pink-600">
-          Royal Wedding Studio
-        </h1>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-8">
-          {links.map((link) => (
+        <nav className="hidden items-center gap-6 lg:flex">
+          {links.map(([label, path]) => (
             <NavLink
-              key={link.name}
-              to={link.path}
+              key={path}
+              to={path}
               className={({ isActive }) =>
-                `text-lg font-medium transition ${
-                  isActive
-                    ? "text-pink-600 border-b-2 border-pink-600 pb-1"
-                    : "text-gray-700 hover:text-pink-600"
-                }`
+                `text-sm font-medium transition ${isActive ? "text-[#e8c27a]" : "text-stone-200 hover:text-white"}`
               }
             >
-              {link.name}
+              {label}
             </NavLink>
           ))}
         </nav>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden" onClick={() => setOpen(!open)}>
-          {open ? <X size={28} /> : <Menu size={28} />}
+        <div className="hidden items-center gap-3 md:flex">
+          <a href={studio.phoneLink} className="rounded-full border border-white/20 p-3 hover:bg-white/10" aria-label="Call now">
+            <Phone size={17} />
+          </a>
+          <Link to="/booking" className="rounded-full bg-[#b3264b] px-5 py-3 text-sm font-semibold hover:bg-[#941d3d]">
+            Book Your Date
+          </Link>
+        </div>
+
+        <button className="lg:hidden" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
+          {open ? <X /> : <Menu />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`
-          md:hidden bg-white/90 backdrop-blur-xl shadow-md absolute w-full left-0 
-          transition-all duration-300
-          ${open ? "top-16 opacity-100" : "top-[-500px] opacity-0"}
-        `}
-      >
-        <nav className="flex flex-col py-4">
-          {links.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `py-3 px-6 text-lg font-medium border-b transition ${
-                  isActive ? "text-pink-600" : "text-gray-700 hover:bg-pink-50"
-                }`
-              }
-            >
-              {link.name}
+      {open && (
+        <nav className="border-t border-white/10 bg-[#17110f] px-5 py-5 lg:hidden">
+          {links.map(([label, path]) => (
+            <NavLink key={path} to={path} onClick={() => setOpen(false)} className="block border-b border-white/10 py-3 text-stone-200">
+              {label}
             </NavLink>
           ))}
+          <Link to="/booking" onClick={() => setOpen(false)} className="mt-5 block rounded-full bg-[#b3264b] px-5 py-3 text-center font-semibold">
+            Book Your Date
+          </Link>
         </nav>
-      </div>
+      )}
     </header>
   );
-};
-
-export default Navbar;
+}

@@ -1,93 +1,49 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { Play, X } from "lucide-react";
+import { api } from "../lib/api";
+import { galleryItems } from "../lib/studioData";
+
+const categories = ["All", "Wedding", "Bride", "Groom", "Couple", "Pre-Wedding", "Engagement", "Haldi", "Mehndi", "Reception", "Drone", "Cinematic"];
 
 export default function Gallery() {
-  const categories = ["All", "Wedding", "PreWedding", "Haldi", "Engagement"];
-
-  const images = [
-    { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", category: "Wedding" },
-    { src: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", category: "Wedding" },
-    { src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80", category: "PreWedding" },
-    { src: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80", category: "Haldi" },
-    { src: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80", category: "Engagement" },
-    { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80", category: "Wedding" },
-    { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", category: "Haldi" },
-    { src: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", category: "PreWedding" },
-    { src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80", category: "Engagement" },
-    { src: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80", category: "Wedding" },
-    { src: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80", category: "Haldi" },
-    { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80", category: "PreWedding" },
-    { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", category: "Engagement" },
-    { src: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", category: "Wedding" },
-    { src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80", category: "Haldi" },
-    { src: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80", category: "PreWedding" },
-    { src: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80", category: "Engagement" },
-    { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80", category: "Wedding" },
-  ];
-
   const [active, setActive] = useState("All");
+  const [items, setItems] = useState(galleryItems);
+  const [selected, setSelected] = useState(null);
 
-  const filtered =
-    active === "All"
-      ? images
-      : images.filter((img) => img.category === active);
+  useEffect(() => {
+    api("/gallery").then((data) => {
+      if (data.length) setItems(data.map((item) => ({ ...item, src: item.imageUrl })));
+    }).catch(() => {});
+  }, []);
+
+  const filtered = active === "All" ? items : items.filter((item) => item.category === active);
 
   return (
-    <div className="bg-white text-gray-900">
-
-      {/* -------------------------------- HERO -------------------------------- */}
-      <section
-        className="relative bg-cover bg-center bg-no-repeat h-[90vh] flex items-center justify-center"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1665960213508-48f07086d49c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080')" }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
-
-        <div className="relative z-10 flex flex-col justify-center items-center h-full text-center px-6">
-          <h1 className="text-4xl sm:text-6xl font-bold text-white">
-            Our <span className="text-pink-400">Gallery</span>
-          </h1>
-          <p className="mt-3 text-pink-200 max-w-2xl">
-            Explore our royal moments from weddings, pre-weddings & ceremonies.
-          </p>
-        </div>
+    <main className="page-top">
+      <section className="page-hero">
+        <p className="eyebrow">Our Portfolio</p>
+        <h1>Stories told in light and emotion.</h1>
+        <p>Explore weddings, portraits, celebrations, destination stories and cinematic frames.</p>
       </section>
-
-      {/* -------------------------------- FILTER BUTTONS -------------------------------- */}
-      <section className="py-12 max-w-7xl mx-auto px-6">
-        <div className="flex flex-wrap justify-center gap-4">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActive(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition ${
-                active === cat
-                  ? "bg-pink-600 text-white shadow-md"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {cat}
+      <section className="section-shell">
+        <div className="mb-10 flex flex-wrap justify-center gap-2">
+          {categories.map((category) => <button key={category} onClick={() => setActive(category)} className={`rounded-full px-4 py-2 text-sm font-bold ${active === category ? "bg-[#b3264b] text-white" : "bg-white text-stone-600 hover:bg-stone-100"}`}>{category}</button>)}
+        </div>
+        <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
+          {filtered.map((item, index) => (
+            <button key={item._id || `${item.src}-${index}`} onClick={() => setSelected(item)} className="group relative mb-5 block w-full overflow-hidden rounded-2xl text-left">
+              {item.mediaType === "video" ? <video src={item.imageUrl} className="w-full" /> : <img src={item.src || item.imageUrl} alt={item.title || item.category} className="w-full transition duration-700 group-hover:scale-105" />}
+              <span className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-5 opacity-0 transition group-hover:opacity-100">
+                <span className="text-white"><strong className="block font-serif text-xl">{item.title || item.category}</strong><small>{item.category}</small></span>
+              </span>
+              {item.mediaType === "video" && <Play className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white" fill="currentColor" />}
             </button>
           ))}
         </div>
+        {!filtered.length && <p className="py-20 text-center text-stone-500">No work has been added to this category yet.</p>}
       </section>
-
-      {/* -------------------------------- IMAGES GRID -------------------------------- */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((img, index) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-2xl shadow-lg group"
-            >
-              <img
-                src={img.src}
-                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110"
-                alt="gallery"
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-    </div>
+      {selected && <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/95 p-5" onClick={() => setSelected(null)}><button className="absolute right-6 top-6 text-white"><X size={32} /></button><img src={selected.src || selected.imageUrl} alt={selected.title} className="max-h-[85vh] max-w-full rounded-xl object-contain" /></div>}
+    </main>
   );
 }
+
