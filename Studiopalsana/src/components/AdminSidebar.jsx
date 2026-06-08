@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Calendar,
   Mail,
+    Users,
   Settings,
   LogOut,
   Image,
@@ -100,6 +101,15 @@ export default function AdminSidebar({ closeSidebar = () => {} }) {
         >
           <Package size={20} />
           Packages Control
+        </Link>
+        <Link
+          to="/admin/team"
+          className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${isActive(
+            "/admin/team"
+          )}`}
+        >
+          <Users size={20} />
+          Team
         </Link>
         <Link
           to="/admin/reviews"

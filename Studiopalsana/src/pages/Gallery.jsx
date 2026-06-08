@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { Play, X } from "lucide-react";
 import { api } from "../lib/api";
-import { galleryItems } from "../lib/studioData";
 
 const categories = ["All", "Wedding", "Bride", "Groom", "Couple", "Pre-Wedding", "Engagement", "Haldi", "Mehndi", "Reception", "Drone", "Cinematic"];
 
 export default function Gallery() {
   const [active, setActive] = useState("All");
-  const [items, setItems] = useState(galleryItems);
+  const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     api("/gallery").then((data) => {
-      if (data.length) setItems(data.map((item) => ({ ...item, src: item.imageUrl })));
-    }).catch(() => {});
+      setItems(Array.isArray(data) ? data.map((item) => ({ ...item, src: item.imageUrl })) : []);
+    }).catch(() => setItems([]));
   }, []);
 
   const filtered = active === "All" ? items : items.filter((item) => item.category === active);

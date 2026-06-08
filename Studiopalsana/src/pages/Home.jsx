@@ -1,7 +1,8 @@
-import { createElement } from "react";
+import { createElement, useEffect, useState } from "react";
 import { ArrowRight, Camera, Film, Heart, MapPin, Play, Quote, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { galleryItems, projects, studio } from "../lib/studioData";
+import { studio } from "../lib/studioData";
+import { api } from "../lib/api";
 import heroImage from "../assets/1.jpg";
 
 const stats = [
@@ -12,6 +13,13 @@ const stats = [
 ];
 
 export default function Home() {
+  const [gallery, setGallery] = useState([]);
+
+  useEffect(() => {
+    api("/gallery").then((data) => setGallery(Array.isArray(data) ? data.map((i) => ({ ...i, src: i.imageUrl })) : [])).catch(() => setGallery([]));
+  }, []);
+
+  const projects = gallery.slice(0, 3).map((g, idx) => ({ title: g.title || `Story ${idx + 1}`, location: g.location || "", date: g.date || "", image: g.src }));
   return (
     <main>
       <section className="relative flex min-h-screen items-end overflow-hidden bg-[#17110f] pb-20 pt-32 text-white lg:items-center lg:pb-0">
@@ -47,7 +55,7 @@ export default function Home() {
 
       <section className="section-shell grid gap-14 lg:grid-cols-[1.05fr_.95fr] lg:items-center">
         <div className="relative">
-          <img src={galleryItems[1].src} alt="Wedding portrait" className="h-[560px] w-full rounded-[2rem] object-cover" />
+          <img src={(gallery[1] && gallery[1].src) || heroImage} alt="Wedding portrait" className="h-[560px] w-full rounded-[2rem] object-cover" />
           <div className="absolute -bottom-6 -right-3 hidden max-w-xs rounded-2xl bg-[#b3264b] p-7 text-white shadow-2xl sm:block">
             <Quote className="mb-3 text-[#e8c27a]" />
             <p className="font-serif text-xl italic">We preserve the feeling behind every beautiful frame.</p>

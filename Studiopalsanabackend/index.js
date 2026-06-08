@@ -11,6 +11,7 @@ const messageRoutes = require("./src/Routes/messageRoutes");
 const packageRoutes = require("./src/Routes/packageRoutes");
 const authRoutes = require("./src/Routes/authRoutes");
 const reviewRoutes = require("./src/Routes/reviewRoutes");
+const teamRoutes = require("./src/Routes/teamRoutes");
 
 dotenv.config();
 
@@ -29,11 +30,24 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/team", teamRoutes);
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
-app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json({ message: "Internal server error" });
+app.use((err, req, res, _next) => {
+  console.error("Global error handler:", err && (err.stack || err.message || err));
+
+  // Multer file upload errors
+  if (err && err.name === "MulterError") {
+    return res.status(400).json({ message: err.message || "File upload error" });
+  }
+
+  // Cloudinary or file-storage errors often carry a message
+  if (err && err.message && (err.message.toLowerCase().includes("cloudinary") || err.message.toLowerCase().includes("upload"))) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  // Default
+  return res.status(500).json({ message: "Internal server error" });
 });
 
 const PORT = process.env.PORT || 5000;

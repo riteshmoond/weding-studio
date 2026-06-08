@@ -1,17 +1,26 @@
 const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("../config/cloudinary");
+const path = require("path");
+let storage;
 
-const storage = new CloudinaryStorage({
-	cloudinary,
-	params: { folder: "wedding-gallery", resource_type: "auto" },
-});
+if (process.env.CLOUD_NAME && process.env.CLOUD_KEY && process.env.CLOUD_SECRET) {
+  const { CloudinaryStorage } = require("multer-storage-cloudinary");
+  const cloudinary = require("../config/cloudinary");
+  storage = new CloudinaryStorage({ cloudinary, params: { folder: "wedding-gallery", resource_type: "auto" } });
+} else {
+  // fallback to local disk storage (development)
+  const uploadDir = path.join(__dirname, "..", "..", "upload");
+  const diskStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, uploadDir),
+    filename: (_req, file, cb) => cb(null, `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`),
+  });
+  storage = diskStorage;
+}
 
 module.exports = multer({
   storage,
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (_req, file, callback) => {
-    const allowed = file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/");
+    const allowed = file.mimetype && (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/"));
     callback(allowed ? null : new Error("Only image and video files are allowed"), allowed);
   },
 });

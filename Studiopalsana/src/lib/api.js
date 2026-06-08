@@ -52,3 +52,9 @@ export const updateBooking = (id, update) =>
 export const deleteBooking = (id) =>
   api(`/bookings/${id}`, { method: "DELETE" });
 
+// Team member API
+export const getTeam = () => api("/team");
+export const createTeamMember = (member) => api("/team", { method: "POST", body: JSON.stringify(member) });
+export const updateTeamMember = (id, member) => api(`/team/${id}`, { method: "PATCH", body: JSON.stringify(member) });
+export const deleteTeamMember = (id) => api(`/team/${id}`, { method: "DELETE" });
+

@@ -17,6 +17,7 @@ import AdminSettings from "./pages/AdminSettings";
 import AdminGallery from "./pages/AdminGallery";
 import AdminPackages from "./pages/AdminPackages";
 import AdminReviews from "./pages/AdminReviews";
+import AdminTeam from "./pages/AdminTeam";
 import Account from "./pages/Account";
 import { getCurrentUser, getToken } from "./lib/api";
 
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
         <Route path="/admin/gallery" element={<AdminRoute><AdminGallery /></AdminRoute>} />
         <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />
+        <Route path="/admin/team" element={<AdminRoute><AdminTeam /></AdminRoute>} />
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

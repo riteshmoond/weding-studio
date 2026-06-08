@@ -1,0 +1,12 @@
+{
+  "name": "weding-studio",
+  "private": true,
+  "workspaces": [
+    "Studiopalsana",
+    "Studiopalsanabackend"
+  ],
+  "scripts": {
+    "start": "npm start --workspace Studiopalsanabackend",
+    "build": "npm run build --workspace Studiopalsana"
+  }
+}

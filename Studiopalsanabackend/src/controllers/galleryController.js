@@ -8,6 +8,16 @@ exports.uploadImage = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
+    console.log("gallery upload - req.file:", req.file && {
+      fieldname: req.file.fieldname,
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size,
+      path: req.file.path,
+      filename: req.file.filename,
+    });
+    console.log("gallery upload - req.body:", req.body);
+
     // support different storage adapters (multer-storage-cloudinary etc.)
     const imageUrl = req.file.path || req.file.secure_url || req.file.url || req.file.filename;
     if (!imageUrl) return res.status(500).json({ message: "Uploaded file missing URL" });
