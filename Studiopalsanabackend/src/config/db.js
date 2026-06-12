@@ -1,21 +1,26 @@
 const mongoose = require("mongoose");
 
-const connectDB = async () => {
-  const mongoUrl = process.env.MONGO_URL?.trim();
+const isValidMongoUrl = (value) =>
+  /^mongodb(\+srv)?:\/\//i.test(value) &&
+  !/<[^>]+>/.test(value) &&
+  !value.includes("your-cluster");
 
-  if (!mongoUrl) {
+const connectDB = async () => {
+  const mongoUrls = [
+    process.env.MONGO_URL?.trim(),
+    process.env.MONGODB_URI?.trim(),
+  ].filter(Boolean);
+  const mongoUrl = mongoUrls.find(isValidMongoUrl);
+
+  if (mongoUrls.length === 0) {
     throw new Error(
-      "MONGO_URL is missing. Add the MongoDB Atlas connection string to the Render environment variables."
+      "MongoDB connection string is missing. Set MONGO_URL or MONGODB_URI in the Render environment variables."
     );
   }
 
-  if (
-    !/^mongodb(\+srv)?:\/\//i.test(mongoUrl) ||
-    /<[^>]+>/.test(mongoUrl) ||
-    mongoUrl.includes("your-cluster")
-  ) {
+  if (!mongoUrl) {
     throw new Error(
-      "MONGO_URL is invalid or still contains placeholders. Copy the complete connection string from MongoDB Atlas and set it in Render."
+      "MongoDB connection string is invalid or contains placeholders. In MongoDB Atlas, use Connect > Drivers and paste the complete URI into Render."
     );
   }
 
