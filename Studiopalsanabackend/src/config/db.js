@@ -8,6 +8,9 @@ const isValidMongoUrl = (value) =>
   !value.includes("DB_USER") &&
   !value.includes("URL_ENCODED_PASSWORD");
 
+const isLocalMongoUrl = (value) =>
+  /(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(value);
+
 const connectDB = async () => {
   const mongoUrls = [
     process.env.MONGO_URL?.trim(),
@@ -24,6 +27,12 @@ const connectDB = async () => {
   if (!mongoUrl) {
     throw new Error(
       "MongoDB connection string is invalid or contains placeholders. Use a local URI like mongodb://127.0.0.1:27017/royal-wedding-studio for dev, or paste a complete MongoDB Atlas URI into MONGO_URL/MONGODB_URI."
+    );
+  }
+
+  if (process.env.NODE_ENV === "production" && isLocalMongoUrl(mongoUrl)) {
+    throw new Error(
+      "MONGO_URL points to localhost, which is not available on Render. Replace it with a MongoDB Atlas mongodb+srv:// URI in Render Environment."
     );
   }
 
