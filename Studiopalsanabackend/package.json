@@ -14,6 +14,9 @@
   "name": "studiopalsanabackend",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "devDependencies": {
     "nodemon": "^3.1.11"
   },

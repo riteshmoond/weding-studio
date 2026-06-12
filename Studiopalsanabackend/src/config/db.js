@@ -27,8 +27,16 @@ const connectDB = async () => {
     );
   }
 
-  await mongoose.connect(mongoUrl);
-  console.log("MongoDB Connected Successfully");
+  try {
+    await mongoose.connect(mongoUrl, { serverSelectionTimeoutMS: 15000 });
+    console.log("MongoDB Connected Successfully");
+  } catch (error) {
+    const reason = error?.message || "Unknown MongoDB connection error";
+    throw new Error(
+      `Could not connect to MongoDB: ${reason}. Check the Render MONGO_URL/MONGODB_URI value and allow Render access in MongoDB Atlas Network Access.`,
+      { cause: error }
+    );
+  }
 };
 
 module.exports = connectDB;

@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+
+dotenv.config();
+
 const cookieParser = require("cookie-parser");
 const connectDB = require("./src/config/db");
 const seedAdmin = require("./src/utils/seedAdmin");
@@ -12,8 +15,6 @@ const packageRoutes = require("./src/Routes/packageRoutes");
 const authRoutes = require("./src/Routes/authRoutes");
 const reviewRoutes = require("./src/Routes/reviewRoutes");
 const teamRoutes = require("./src/Routes/teamRoutes");
-
-dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -64,4 +65,3 @@ startServer().catch((error) => {
 });
 
 module.exports = app;
-
