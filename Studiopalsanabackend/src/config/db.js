@@ -13,8 +13,7 @@ const isLocalMongoUrl = (value) =>
 
 const connectDB = async () => {
   const mongoUrls = [
-    process.env.MONGO_URL?.trim(),
-    process.env.MONGODB_URI?.trim(),
+    process.env.MONGO_URL?.trim()
   ].filter(Boolean);
   const mongoUrl = mongoUrls.find(isValidMongoUrl);
 
@@ -49,3 +48,13 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+
+
+// const mongoose = require("mongoose")
+
+
+// const connectDb = async () => {
+//   await mongoose.connect(process.env.MONGO_URL)
+// }
+
+// module.exports = connectDb;
