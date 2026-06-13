@@ -159,9 +159,34 @@
 
 
 
-import React from "react";
+import { useEffect, useState } from "react";
+import { getTeam } from "../lib/api";
 
 export default function About() {
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadTeam() {
+      try {
+        const members = await getTeam();
+        if (active) setTeam(Array.isArray(members) ? members : []);
+      } catch {
+        if (active) setTeam([]);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    void loadTeam();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div className="bg-white text-gray-900">
 
@@ -278,34 +303,35 @@ export default function About() {
           Meet Our <span className="text-pink-600">Luxury Team</span>
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 text-center">
-
-          <div className="shadow-xl p-8 rounded-3xl hover:shadow-2xl transition bg-white">
-            <img
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80"
-              className="w-32 h-32 object-cover rounded-full mx-auto mb-5 border-4 border-pink-200"
-            />
-            <h3 className="text-xl font-semibold">Ritesh Verma</h3>
-            <p className="text-gray-600">Lead Photographer</p>
-          </div>
-
-          <div className="shadow-xl p-8 rounded-3xl hover:shadow-2xl transition bg-white">
-            <img
-              src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80"
-              className="w-32 h-32 object-cover rounded-full mx-auto mb-5 border-4 border-pink-200"
-            />
-            <h3 className="text-xl font-semibold">Aman Singh</h3>
-            <p className="text-gray-600">Cinematic Director</p>
-          </div>
-
-          <div className="shadow-xl p-8 rounded-3xl hover:shadow-2xl transition bg-white">
-            <img
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80"
-              className="w-32 h-32 object-cover rounded-full mx-auto mb-5 border-4 border-pink-200"
-            />
-            <h3 className="text-xl font-semibold">Priya Sharma</h3>
-            <p className="text-gray-600">Creative Editor</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 text-center">
+          {loading ? (
+            <div className="rounded-3xl border border-dashed border-pink-200 bg-pink-50/60 p-10 text-gray-600 sm:col-span-2 lg:col-span-3">
+              Team members load ho rahe hain...
+            </div>
+          ) : team.length ? (
+            team.map((member) => (
+              <article key={member._id} className="shadow-xl p-8 rounded-3xl hover:shadow-2xl transition bg-white">
+                {member.photo ? (
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="w-32 h-32 object-cover rounded-full mx-auto mb-5 border-4 border-pink-200"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full mx-auto mb-5 border-4 border-pink-200 bg-pink-50 flex items-center justify-center text-3xl font-semibold text-pink-500">
+                    {member.name?.trim()?.charAt(0) || "T"}
+                  </div>
+                )}
+                <h3 className="text-xl font-semibold">{member.name}</h3>
+                <p className="text-gray-600">{member.role || "Team Member"}</p>
+                {member.bio ? <p className="mt-4 text-sm text-gray-500 leading-relaxed">{member.bio}</p> : null}
+              </article>
+            ))
+          ) : (
+            <div className="rounded-3xl border border-dashed border-pink-200 bg-pink-50/60 p-10 text-gray-600 sm:col-span-2 lg:col-span-3">
+              Abhi koi team member add nahi hua hai.
+            </div>
+          )}
         </div>
       </section>
 
