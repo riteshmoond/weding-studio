@@ -1,5 +1,14 @@
 const API_URL = import.meta.env.VITE_API_URL || "https://weding-studio.onrender.com/api";
 
+export function resolveMediaUrl(value) {
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+
+  const baseUrl = API_URL.replace(/\/api\/?$/, "");
+  const normalizedPath = value.startsWith("/") ? value : `/${value}`;
+  return `${baseUrl}${normalizedPath}`;
+}
+
 export function getToken() {
   return localStorage.getItem("royalStudioToken");
 }

@@ -19,7 +19,11 @@ exports.uploadImage = async (req, res) => {
     console.log("gallery upload - req.body:", req.body);
 
     // support different storage adapters (multer-storage-cloudinary etc.)
-    const imageUrl = req.file.path || req.file.secure_url || req.file.url || req.file.filename;
+    const isRemoteAsset = Boolean(req.file.path && /^https?:\/\//i.test(req.file.path));
+    const baseUrl = `${req.headers["x-forwarded-proto"] || req.protocol}://${req.get("host")}`;
+    const imageUrl = isRemoteAsset
+      ? (req.file.path || req.file.secure_url || req.file.url)
+      : `${baseUrl}/upload/${req.file.filename}`;
     if (!imageUrl) return res.status(500).json({ message: "Uploaded file missing URL" });
 
     const data = await Gallery.create({

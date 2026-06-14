@@ -15,10 +15,12 @@ const packageRoutes = require("./src/Routes/packageRoutes");
 const authRoutes = require("./src/Routes/authRoutes");
 const reviewRoutes = require("./src/Routes/reviewRoutes");
 const teamRoutes = require("./src/Routes/teamRoutes");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
   credentials: true,

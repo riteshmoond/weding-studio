@@ -56,7 +56,41 @@ export default function AdminBookings() {
 }
 
 export function AdminShell({ title, children }) {
-  return <div className="min-h-screen bg-stone-100"><div className="fixed inset-y-0 left-0 hidden w-64 md:block"><AdminSidebar /></div><main className="p-5 md:ml-64 md:p-8"><div className="mb-7 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-widest text-[#b3264b]">Royal Wedding Studio</p><h1 className="mt-1 font-serif text-3xl">{title}</h1></div></div>{children}</main></div>;
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-stone-100">
+      {/* Permanent sidebar on large screens */}
+      <div className="fixed inset-y-0 left-0 hidden w-64 lg:block"><AdminSidebar /></div>
+
+      {/* Slide-over drawer for small/medium screens */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black/40" onClick={() => setOpen(false)} />
+          <div className="relative z-50 w-64 bg-white shadow-xl p-4 overflow-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Navigation</h3>
+              <button className="admin-action" onClick={() => setOpen(false)}>Close</button>
+            </div>
+            <AdminSidebar />
+          </div>
+        </div>
+      )}
+
+      <main className="p-5 lg:ml-64 lg:p-8">
+        <div className="mb-7 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button className="btn-primary lg:hidden" onClick={() => setOpen(true)}>Menu</button>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#b3264b]">Royal Wedding Studio</p>
+              <h1 className="mt-1 font-serif text-3xl">{title}</h1>
+            </div>
+          </div>
+        </div>
+        {children}
+      </main>
+    </div>
+  );
 }
 
 function Status({ value = "Pending" }) {

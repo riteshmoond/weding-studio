@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Play, X } from "lucide-react";
-import { api } from "../lib/api";
+import { api, resolveMediaUrl } from "../lib/api";
 
 const categories = ["All", "Wedding", "Bride", "Groom", "Couple", "Pre-Wedding", "Engagement", "Haldi", "Mehndi", "Reception", "Drone", "Cinematic"];
 
@@ -11,7 +11,7 @@ export default function Gallery() {
 
   useEffect(() => {
     api("/gallery").then((data) => {
-      setItems(Array.isArray(data) ? data.map((item) => ({ ...item, src: item.imageUrl })) : []);
+      setItems(Array.isArray(data) ? data.map((item) => ({ ...item, src: resolveMediaUrl(item.imageUrl) })) : []);
     }).catch(() => setItems([]));
   }, []);
 
@@ -31,7 +31,7 @@ export default function Gallery() {
         <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
           {filtered.map((item, index) => (
             <button key={item._id || `${item.src}-${index}`} onClick={() => setSelected(item)} className="group relative mb-5 block w-full overflow-hidden rounded-2xl text-left">
-              {item.mediaType === "video" ? <video src={item.imageUrl} className="w-full" /> : <img src={item.src || item.imageUrl} alt={item.title || item.category} className="w-full transition duration-700 group-hover:scale-105" />}
+              {item.mediaType === "video" ? <video src={item.src || item.imageUrl} className="w-full" /> : <img src={item.src || item.imageUrl} alt={item.title || item.category} className="w-full transition duration-700 group-hover:scale-105" />}
               <span className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-5 opacity-0 transition group-hover:opacity-100">
                 <span className="text-white"><strong className="block font-serif text-xl">{item.title || item.category}</strong><small>{item.category}</small></span>
               </span>
