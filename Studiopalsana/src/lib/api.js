@@ -23,6 +23,14 @@ export function clearSession() {
   localStorage.removeItem("royalStudioUser");
 }
 
+export async function getStudioSettings() {
+  return api("/settings");
+}
+
+export async function saveStudioSettings(settings) {
+  return api("/settings", { method: "PUT", body: JSON.stringify(settings) });
+}
+
 export function getCurrentUser() {
   try {
     return JSON.parse(localStorage.getItem("royalStudioUser")) || null;

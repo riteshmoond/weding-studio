@@ -15,6 +15,7 @@ const packageRoutes = require("./src/Routes/packageRoutes");
 const authRoutes = require("./src/Routes/authRoutes");
 const reviewRoutes = require("./src/Routes/reviewRoutes");
 const teamRoutes = require("./src/Routes/teamRoutes");
+const settingsRoutes = require("./src/Routes/settingsRoutes");
 const path = require("path");
 
 const app = express();
@@ -34,6 +35,7 @@ app.use("/api/packages", packageRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/team", teamRoutes);
+app.use("/api/settings", settingsRoutes);
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
 app.use((err, req, res, _next) => {

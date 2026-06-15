@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -19,7 +20,8 @@ import AdminPackages from "./pages/AdminPackages";
 import AdminReviews from "./pages/AdminReviews";
 import AdminTeam from "./pages/AdminTeam";
 import Account from "./pages/Account";
-import { getCurrentUser, getToken } from "./lib/api";
+import { getCurrentUser, getToken, getStudioSettings } from "./lib/api";
+import { writeSettings } from "./lib/studioData";
 
 function AdminRoute({ children }) {
   const user = getCurrentUser();
@@ -29,10 +31,18 @@ function AdminRoute({ children }) {
 export default function App() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
+  const [settingsReady, setSettingsReady] = useState(false);
+
+  useEffect(() => {
+    getStudioSettings()
+      .then((settings) => writeSettings(settings))
+      .catch(() => {})
+      .finally(() => setSettingsReady(true));
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#fbf8f5] text-stone-900">
-      {!isAdmin && <Header />}
+      {!isAdmin && settingsReady && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -54,7 +64,7 @@ export default function App() {
         <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {!isAdmin && <Footer />}
+      {!isAdmin && settingsReady && <Footer />}
     </div>
   );
 }

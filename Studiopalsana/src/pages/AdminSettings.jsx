@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import AdminTopbar from "../components/AdminTopbar";
 import { Menu } from "lucide-react";
+import { getStudioSettings, saveStudioSettings } from "../lib/api";
+import { writeSettings } from "../lib/studioData";
 
 export default function AdminSettings() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,12 +23,37 @@ export default function AdminSettings() {
     };
   });
 
+  useEffect(() => {
+    getStudioSettings().then((data) => {
+      const nextSettings = {
+        studioName: data.studioName || "",
+        email: data.email || "",
+        phone: data.phone || "",
+        address: data.address || "",
+        heroImage: data.heroImage || "",
+        instagram: data.instagram || "",
+        facebook: data.facebook || "",
+        youtube: data.youtube || "",
+      };
+      setSettings(nextSettings);
+      writeSettings(nextSettings);
+    }).catch(() => {});
+  }, []);
+
   const handleChange = (e) =>
     setSettings({ ...settings, [e.target.name]: e.target.value });
 
   const saveSettings = () => {
-    localStorage.setItem("studioSettings", JSON.stringify(settings));
-    alert("Settings saved successfully!");
+    saveStudioSettings(settings)
+      .then((saved) => {
+        writeSettings(saved);
+        setSettings(saved);
+        alert("Settings saved successfully!");
+      })
+      .catch(() => {
+        localStorage.setItem("studioSettings", JSON.stringify(settings));
+        alert("Settings saved locally. Backend save failed.");
+      });
   };
 
   const resetSettings = () => {

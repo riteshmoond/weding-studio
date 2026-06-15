@@ -19,6 +19,15 @@ function readSettings() {
   }
 }
 
+export function writeSettings(settings) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem("studioSettings", JSON.stringify(settings || {}));
+  } catch {
+    // ignore storage failures
+  }
+}
+
 function digitsOnly(value) {
   return String(value || "").replace(/\D/g, "");
 }

@@ -1,12 +1,18 @@
-import { Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { studio } from "../lib/studioData";
 
 export default function Footer() {
+  const socialLinks = [
+    ["Instagram", studio.instagram, <Instagram size={18} />],
+    ["Facebook", studio.facebook, <Facebook size={18} />],
+    ["YouTube", studio.youtube, <Youtube size={18} />],
+  ].filter(([, href]) => Boolean(href));
+
   return (
     <footer className="bg-[#17110f] px-6 pb-6 pt-10 sm:pt-16 sm:pb-8 text-stone-300">
       <div className="mx-auto grid max-w-7xl gap-10 border-b border-white/10 pb-8 sm:pb-12 md:grid-cols-3">
-        <div><h2 className="font-serif text-3xl text-[#e8c27a]">{studio.name}</h2><p className="mt-4 max-w-sm leading-7">{studio.tagline}. Luxury photography and films for celebrations across India.</p><div className="mt-5 flex gap-3"><a className="social-link" href="#"><Instagram size={18} /></a><a className="social-link" href="#"><Youtube size={18} /></a></div></div>
+        <div><h2 className="font-serif text-3xl text-[#e8c27a]">{studio.name}</h2><p className="mt-4 max-w-sm leading-7">{studio.tagline}. Luxury photography and films for celebrations across India.</p><div className="mt-5 flex gap-3">{socialLinks.map(([label, href, icon]) => <a key={label} className="social-link" href={href} target="_blank" rel="noreferrer" aria-label={label}>{icon}</a>)}</div></div>
         <div><h3 className="font-bold text-white">Explore</h3><div className="mt-4 grid grid-cols-2 gap-3 text-sm"><Link to="/about">About</Link><Link to="/gallery">Gallery</Link><Link to="/packages">Packages</Link><Link to="/booking">Booking</Link><Link to="/reviews">Reviews</Link><Link to="/admin/login">Admin</Link></div></div>
         <div><h3 className="font-bold text-white">Contact</h3><div className="mt-4 space-y-4 text-sm"><a className="flex gap-3" href={studio.phoneLink}><Phone size={18} className="text-[#e8c27a]" />{studio.phone}</a><a className="flex gap-3" href={`mailto:${studio.email}`}><Mail size={18} className="text-[#e8c27a]" />{studio.email}</a><a className="flex gap-3" href={studio.directions}><MapPin size={18} className="text-[#e8c27a]" />{studio.address}</a></div></div>
       </div>
