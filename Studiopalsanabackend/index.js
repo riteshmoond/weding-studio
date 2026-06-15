@@ -19,6 +19,7 @@ const settingsRoutes = require("./src/Routes/settingsRoutes");
 const path = require("path");
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cookieParser());
 app.use("/upload", express.static(path.join(__dirname, "upload")));

@@ -20,12 +20,14 @@ import AdminPackages from "./pages/AdminPackages";
 import AdminReviews from "./pages/AdminReviews";
 import AdminTeam from "./pages/AdminTeam";
 import Account from "./pages/Account";
-import { getCurrentUser, getToken, getStudioSettings } from "./lib/api";
+import { getStudioSettings } from "./lib/api";
 import { writeSettings } from "./lib/studioData";
+import { useAuth } from "./context/auth-context";
 
 function AdminRoute({ children }) {
-  const user = getCurrentUser();
-  return getToken() && user?.role === "admin" ? children : <Navigate to="/admin/login" replace />;
+  const { ready, user } = useAuth();
+  if (!ready) return <div className="min-h-screen bg-[#17110f]" />;
+  return user?.role === "admin" ? children : <Navigate to="/admin/login" replace />;
 }
 
 export default function App() {

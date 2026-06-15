@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { CalendarDays, Check, ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { createBooking, getCurrentUser, getToken } from "../lib/api";
+import { createBooking } from "../lib/api";
+import { useAuth } from "../context/auth-context";
 
 const steps = ["Your Details", "Event", "Date & Venue", "Package", "Add-ons", "Confirm"];
 const eventTypes = ["Wedding", "Engagement", "Haldi", "Mehndi", "Reception", "Pre-Wedding", "Other"];
@@ -10,8 +11,8 @@ const addOns = ["Drone Coverage", "LED Screen", "Live Streaming", "Crane Camera"
 
 export default function Booking() {
   const location = useLocation();
-  const user = getCurrentUser();
-  const hasCustomerAccess = Boolean(getToken() && user?.role === "customer");
+  const { user } = useAuth();
+  const hasCustomerAccess = user?.role === "customer";
   const initialPackage = new URLSearchParams(location.search).get("package") || "";
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState({ type: "", message: "" });
@@ -171,4 +172,3 @@ function Field({ label, ...props }) {
 function ChoiceGrid({ items, selected, onSelect }) {
   return <div className="grid gap-3 sm:grid-cols-2">{items.map((item) => <button key={item} type="button" onClick={() => onSelect(item)} className={`rounded-xl border p-5 text-left font-bold transition ${selected === item ? "border-[#b3264b] bg-[#b3264b] text-white" : "border-stone-200 hover:border-[#b3264b]"}`}>{item}</button>)}</div>;
 }
-

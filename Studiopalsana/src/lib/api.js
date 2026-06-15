@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || "https://weding-studio.onrender.com/api";
+const SESSION_EVENT = "royal-studio-session-change";
 
 export function resolveMediaUrl(value) {
   if (!value) return "";
@@ -16,11 +17,13 @@ export function getToken() {
 export function setSession(payload) {
   localStorage.setItem("royalStudioToken", payload.token);
   localStorage.setItem("royalStudioUser", JSON.stringify(payload.user));
+  window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 export function clearSession() {
   localStorage.removeItem("royalStudioToken");
   localStorage.removeItem("royalStudioUser");
+  window.dispatchEvent(new Event(SESSION_EVENT));
 }
 
 export async function getStudioSettings() {
@@ -37,6 +40,15 @@ export function getCurrentUser() {
   } catch {
     return null;
   }
+}
+
+export function subscribeToSession(callback) {
+  window.addEventListener(SESSION_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener(SESSION_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
 }
 
 export async function api(path, options = {}) {
@@ -56,7 +68,9 @@ export async function api(path, options = {}) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.message || "Something went wrong");
+    const error = new Error(data.message || "Something went wrong");
+    error.status = response.status;
+    throw error;
   }
   return data;
 }
@@ -74,4 +88,3 @@ export const getTeam = () => api("/team");
 export const createTeamMember = (member) => api("/team", { method: "POST", body: JSON.stringify(member) });
 export const updateTeamMember = (id, member) => api(`/team/${id}`, { method: "PATCH", body: JSON.stringify(member) });
 export const deleteTeamMember = (id) => api(`/team/${id}`, { method: "DELETE" });
-

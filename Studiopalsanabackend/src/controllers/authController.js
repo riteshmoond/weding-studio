@@ -52,6 +52,20 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.me = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(401).json({ message: "User account no longer exists" });
+    }
+    return res.json({
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch {
+    return res.status(500).json({ message: "Could not restore session" });
+  }
+};
+
 exports.createFirstAdmin = async (req, res) => {
   try {
     if (await User.exists({ role: "admin" })) {
@@ -73,4 +87,3 @@ exports.createFirstAdmin = async (req, res) => {
     return res.status(500).json({ message: "Could not create admin" });
   }
 };
-
