@@ -1,73 +1,135 @@
+# Studiopalsana Frontend
 
-# Wedding Studio Booking System
-
-Yeh project ek full-stack Wedding Studio Booking System hai, jisme saare important features working hain:
-
-## Features
-
-- **Event Booking**: User apni shaadi ya event ki booking kar sakta hai (date, name, phone ke sath)
-- **Calendar Booking**: Date picker se booking date select hoti hai
-- **Gallery**: Wedding photos ka gallery (admin upload, user view)
-- **Package Selection**: Alag-alag wedding packages dikhte hain
-- **Admin Panel**: Admin login, bookings, gallery, packages, messages manage kar sakta hai
-- **Customer Reviews**: User apna review/feedback de sakta hai, sabke reviews testimonials page pe dikhte hain
-- **WhatsApp Integration**: User direct WhatsApp pe booking message bhej sakta hai (pre-filled details ke sath)
-
----
+Ye folder Wedding Studio Booking System ka React frontend hai. Backend API `../Studiopalsanabackend` folder me hai.
 
 ## Tech Stack
 
-- **Frontend**: React, Vite, TailwindCSS
-- **Backend**: Node.js, Express, MongoDB (Mongoose)
+- React 19
+- Vite 7
+- React Router DOM 7
+- Tailwind CSS 4
+- Lucide React icons
 
----
+## Setup
 
-## Setup & Run (Hinglish)
+```bash
+cd Studiopalsana
+npm install
+```
 
-### 1. Backend (Studiopalsanabackend)
+Local backend ke liye `.env` file banao:
 
-1. `cd Studiopalsanabackend`
-2. `npm install`
-3. `.env` file banao (MongoDB URI, etc.)
-4. `npm run dev` se backend server chalao (default: http://localhost:5000)
+```env
+VITE_API_URL=http://localhost:5000/api
+```
 
-### 2. Frontend (Studiopalsana)
+Dev server:
 
-1. `cd Studiopalsana`
-2. `npm install`
-3. `npm run dev` se frontend chalao (default: http://localhost:3000)
+```bash
+npm run dev
+```
 
----
+Default local URL:
 
-## Usage Guide
+```text
+http://localhost:5173
+```
 
-- **Booking**: Home page pe booking form bharo, date select karo, Book Now dabao ya WhatsApp se book karo
-- **Gallery**: Gallery page pe photos dekho
-- **Packages**: Packages page pe wedding packages dekho
-- **Admin Panel**: /admin se login karke bookings, gallery, packages, messages manage karo
-- **Customer Reviews**: Testimonials page pe review submit karo aur sabke reviews dekho
-- **WhatsApp**: Booking form me WhatsApp button se direct WhatsApp pe message bhejo
+Production build:
 
----
+```bash
+npm run build
+```
 
-## Important Files/Folders
+Preview build:
 
-- `src/components/BookingForm.jsx` – Booking form + WhatsApp integration
-- `src/components/ReviewForm.jsx` – Review submit form
-- `src/components/TestimonialsList.jsx` – Reviews list
-- `src/pages/Testimonials.jsx` – Testimonials page
-- `src/lib/api.js` – Booking API helper
-- `src/lib/reviewApi.js` – Review API helper
+```bash
+npm run preview
+```
 
----
+Lint:
 
-## Customization
+```bash
+npm run lint
+```
 
-- WhatsApp number change karna ho toh `BookingForm.jsx` me number update karo
-- Admin credentials, MongoDB URI, etc. `.env` file me set karo
+## Pages
 
----
+- `/` - Home
+- `/about` - About
+- `/services` - Services
+- `/gallery` - Gallery
+- `/packages` - Packages
+- `/booking` - Booking
+- `/reviews` - Reviews
+- `/contact` - Contact
+- `/account` - Customer account
+- `/admin/login` - Admin login
+- `/admin/dashboard` - Admin dashboard
+- `/admin/bookings` - Bookings management
+- `/admin/messages` - Contact messages
+- `/admin/settings` - Studio settings
+- `/admin/gallery` - Gallery management
+- `/admin/packages` - Packages management
+- `/admin/team` - Team management
+- `/admin/reviews` - Review moderation
 
-## Credits
+## Important Files
 
-Banaya gaya by your team, with ❤️ using React, Node.js, MongoDB.
+- `src/App.jsx` - routes and admin protection
+- `src/main.jsx` - React entry point
+- `src/lib/api.js` - backend API client, token/session helpers
+- `src/lib/studioData.js` - studio settings helpers
+- `src/context/AuthContext.jsx` - auth provider
+- `src/context/auth-context.js` - auth hook/context export
+- `src/components/Header.jsx` - public navigation
+- `src/components/Footer.jsx` - public footer
+- `src/components/BookingForm.jsx` - booking form
+- `src/components/AdminSidebar.jsx` - admin sidebar
+- `src/components/AdminTopbar.jsx` - admin topbar
+
+## API Connection
+
+Frontend `src/lib/api.js` me `VITE_API_URL` read karta hai.
+
+Local:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Production:
+
+```env
+VITE_API_URL=https://your-backend-domain.com/api
+```
+
+Env change karne ke baad Vite server restart karna zaroori hai.
+
+## Auth
+
+- Login/register ke baad JWT token `localStorage` me `royalStudioToken` key ke under save hota hai
+- Current user `royalStudioUser` key me save hota hai
+- Protected admin pages ke liye `user.role === "admin"` required hai
+
+## Deployment on Vercel
+
+Build command:
+
+```bash
+npm run build
+```
+
+Output directory:
+
+```text
+dist
+```
+
+Environment variable:
+
+```env
+VITE_API_URL=https://your-backend-domain.com/api
+```
+
+`vercel.json` me SPA rewrite configured hai, isliye direct route refresh work karega.
